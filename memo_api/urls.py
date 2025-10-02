@@ -27,13 +27,13 @@ from memos import views
 
 
 router = DefaultRouter()
-router.register(r'memos', MemoViewSet)
+router.register(r'memos', views.MemoViewSet, basename='memo')
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('memos/', views.memo_list),
+    # path('memos/', views.memo_list),
     path('api/token/',  MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path("api/users/", UserListAPIView.as_view(), name="user_list"),
     path("api/register/", register_user, name="register_user"),
