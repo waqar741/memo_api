@@ -11,8 +11,8 @@ from .serializers import MemoSerializer, MyTokenObtainPairSerializer
 
 class MemoViewSet(viewsets.ModelViewSet):
     serializer_class = MemoSerializer
-    permission_classes = [IsAuthenticated] # Ensures only logged-in users can access notes
-    parser_classes = [MultiPartParser, FormParser] # For handling photo uploads
+    permission_classes = [IsAuthenticated] 
+    parser_classes = [MultiPartParser, FormParser] 
 
     def get_queryset(self):
         user = self.request.user
@@ -23,11 +23,11 @@ class MemoViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny]) # Changed to AllowAny so new users can register
+@permission_classes([AllowAny]) 
 def register_user(request):
     username = request.data.get('username')
     password = request.data.get('password')
-    email = request.data.get('email', '')
+    email = request.data.get('email')
 
     if not username or not password:
         return Response({'error': 'Username and password required'}, status=status.HTTP_400_BAD_REQUEST)
@@ -41,3 +41,4 @@ def register_user(request):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
