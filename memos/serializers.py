@@ -24,7 +24,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 class UserListAPIView(generics.ListAPIView):
     queryset = User.objects.all()
-    serializer_class = serializers.ModelSerializer
+    serializer_class = UserSerializer
 
 class MemoSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source="owner.username")
