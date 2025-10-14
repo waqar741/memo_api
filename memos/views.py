@@ -1,44 +1,46 @@
-from django.contrib.auth.models import User
-from rest_framework import viewsets, status
+from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.parsers import MultiPartParser, FormParser
-
+from django.contrib.auth.models import User
 from .models import Memo
-from .serializers import MemoSerializer, MyTokenObtainPairSerializer
+from .serializers import MemoSerializer, UserSerializer
 
 class MemoViewSet(viewsets.ModelViewSet):
     serializer_class = MemoSerializer
-    permission_classes = [IsAuthenticated] 
-    parser_classes = [MultiPartParser, FormParser] 
+    permission_classes = [permissions.IsAuthenticated]
+    
+    queryset = Memo.objects.all()
 
     def get_queryset(self):
-        user = self.request.user
-        return Memo.objects.filter(owner=user).order_by('-created_at')
+        return Memo.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save(user=self.request.user)
 
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def current_user(request):
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
 
 @api_view(['POST'])
-@permission_classes([AllowAny]) 
+@permission_classes([permissions.AllowAny])
 def register_user(request):
     username = request.data.get('username')
     password = request.data.get('password')
     email = request.data.get('email')
-
-    if not username or not password:
-        return Response({'error': 'Username and password required'}, status=status.HTTP_400_BAD_REQUEST)
-
+    
     if User.objects.filter(username=username).exists():
-        return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
-
-    User.objects.create_user(username=username, password=password, email=email)
-    return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
-
-
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
-
+        return Response(
+            {'error': 'Username already exists'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    user = User.objects.create_user(
+        username=username,
+        password=password,
+        email=email
+    )
+    
+    serializer = UserSerializer(user)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)

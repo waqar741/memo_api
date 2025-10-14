@@ -16,26 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from memos.serializers import UserListAPIView
-from memos.views import register_user, MyTokenObtainPairView
-from rest_framework.routers import DefaultRouter
-from memos.views import MemoViewSet
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
-from memos import views
-
-
-router = DefaultRouter()
-router.register(r'memos', views.MemoViewSet, basename='memo')
-
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-    # path('memos/', views.memo_list),
-    path('api/token/',  MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path("api/users/", UserListAPIView.as_view(), name="user_list"),
-    path("api/register/", register_user, name="register_user"),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+    path('api/', include('memos.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
