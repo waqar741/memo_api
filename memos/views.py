@@ -35,7 +35,7 @@ def register_user(request):
             {'error': 'Username already exists'}, 
             status=status.HTTP_400_BAD_REQUEST
         )
-    
+    #create new user
     user = User.objects.create_user(
         username=username,
         password=password,
