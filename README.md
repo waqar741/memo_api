@@ -1,6 +1,6 @@
-# Memo API - HFP Backend 🏥
+# Memo API - Notes Backend 🏥
 
-This is the backend API for the **Health First Priority (HFP)** system. It is built with **Django** and serves as the central data storage and management hub, allowing the frontend to store and retrieve health records via RESTful API endpoints.
+This is the backend API for the **Notes Tracking** system. It is built with **Django** and serves as the central data storage and management hub, allowing the frontend to store and retrieve notes records via RESTful API endpoints.
 
 ## 🚀 Features
 
